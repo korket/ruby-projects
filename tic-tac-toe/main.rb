@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'pry-byebug'
-
 # Board for the Tic-Tac-Toe Game
 class Board
   attr_reader :tiles, :row_one, :row_two, :row_three
