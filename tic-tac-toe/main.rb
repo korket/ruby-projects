@@ -77,26 +77,31 @@ WIN_COMBS = [[0, 1, 2], [3, 4, 5], [6, 7, 8],
              [0, 4, 8], [2, 4, 6]].freeze
 
 # Checks if a player is already win
-def win_check(combinations, board)
-  combinations.any? { |comb| board.tiles.values_at(*comb).uniq.length == 1 }
+def game_check(combinations, board)
+  if combinations.any? { |comb| board.tiles.values_at(*comb).uniq.length == 1 }
+    'win'
+  elsif board.tiles.count('X') == 5
+    'draw'
+  end
 end
 
 # Game
 def game(player_one, player_two, board)
-  win = false
-  while win == false
+  game_end = false
+  until game_end
     player_one.move(board)
     winner = player_one.name
-    win = win_check(WIN_COMBS, board)
+    game_end = game_check(WIN_COMBS, board)
 
-    break if win == true
+    break if game_end == 'win' || game_end == 'draw'
 
     player_two.move(board)
     winner = player_two.name
-    win = win_check(WIN_COMBS, board)
+    game_end = game_check(WIN_COMBS, board)
   end
 
-  puts "Congratulations! #{winner} wins the game!"
+  puts "Congratulations! #{winner} wins the game!" if game_end == 'win'
+  puts 'The game ends with a shocking draw!!!' if game_end == 'draw'
   board.show_board
 end
 
