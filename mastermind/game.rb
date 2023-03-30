@@ -81,24 +81,27 @@ module CodeBreaker
   end
 
   def get_hint
-    @same = 0
+    @same_both = 0
     @same_color = 0
-    @n = 0
+
     @splitted_code = @secret_code.split('')
     @splitted_guess = @guess.split('')
 
-    4.times do
-      @same += 1 if @splitted_code[@n] == @splitted_guess[@n]
-      @n += 1
+    @splitted_code.each_with_index do |code, idx|
+      if @splitted_guess[idx] == code
+        @same_both += 1
+        @splitted_code[idx] = nil
+        @splitted_guess[idx] = nil
+      end
     end
 
-    @splitted_code.uniq.each { |n| @same_color += 1 if @splitted_guess.any?(n) }
-
-    @same_color -= @same
-    @same_color = 0 if @same_color.negative?
-
-    rows[counter][1] = Array.new(@same, 2) + Array.new(@same_color, 1)
-    rows[counter][1].shuffle!
+    @splitted_guess.compact.each do |code|
+      if @splitted_code.include?(code)
+        @same_color += 1
+        @splitted_code[@splitted_code.index(code)] = nil
+      end
+    end
+    rows[counter][1] = Array.new(@same_both, 2) + Array.new(@same_color, 1)
 
     (4 - rows[counter][1].length).times do
       rows[counter][1].push(0)
@@ -160,6 +163,7 @@ class Game
   def game_lose
     if @input == '2'
       puts "Sadly, you've lost the game because you can't crack the code in 10 tries."
+      puts "The code is '#{@secret_code}'"
     else
       puts 'The computer cracked the code, you lost!'
     end
