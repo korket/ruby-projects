@@ -45,12 +45,12 @@ module CodeMaker
   attr_accessor :secret_code
 
   def set_code
-    puts 'Please type four combination of numbers from 1 to 6 to set '
+    puts 'Please type four combination of numbers between 1 and 6 to set '
     puts 'your secret code. e.g. "1123" (🔴, 🔴, 🔵, 🟠)'
 
     @secret_code = gets.chomp
     until @secret_code.length == 4
-      puts 'Please put a valid combination of four numbers from 1 to 6'
+      puts 'Please put a valid combination of four numbers between 1 and 6'
       @secret_code = gets.chomp
     end
   end
@@ -80,7 +80,7 @@ module CodeBreaker
   def guess_code
     @guess = gets.chomp
     until @guess.length == 4
-      puts 'Please put a valid combination of four numbers from 1 to 6'
+      puts 'Please put a valid combination of four numbers between 1 and 6'
       @guess = gets.chomp
     end
 
@@ -175,10 +175,13 @@ class Game
   def introduction
     puts 'Welcome to the game of Mastermind.'
     puts 'In this game, there are Code Breaker and Code Maker'
+    puts ''
     puts "Code Breaker's job is to guess the secret code made by the Code Maker."
     puts 'The code must be in the correct color and order.'
+    puts ''
     puts "Meanwhile, the Code Maker's job is to make a secret code"
     puts 'that the Code Breaker will try to break'
+    puts ''
     puts "There will be clues about the secret's code correct color and order"
     puts 'each time the Code Breaker guess.'
     puts ''
