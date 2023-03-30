@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'pry-byebug'
-
 # Display
 module Display
   # Unicode Box Drawing
