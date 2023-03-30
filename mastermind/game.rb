@@ -63,6 +63,25 @@ module CodeMaker
       @secret_code = gets.chomp
     end
   end
+
+  def computer_guess
+    @guess = Array.new(4, 1).map! { |x| x = rand(1..6) }.join
+    rows[counter][0] = @guess.split('').map { |num| num.to_i}
+    get_hint
+    update_display
+    check_computer_guess
+  end
+
+  def check_computer_guess
+    if @secret_code == @guess
+      game_lose
+    elsif @counter == 10
+      game_win
+    else
+      @counter += 1
+      computer_guess
+    end
+  end
 end
 
 # Code Breaker
@@ -194,6 +213,7 @@ class Game
 
     if @input == '1'
       set_code
+      computer_guess
     else
       puts 'Guess the secret code by typing four combination of numbers'
       puts 'between 1 and 6. e.g. "2243" (🔵, 🔵, 🟢, 🟠)'
