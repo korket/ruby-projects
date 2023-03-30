@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'pry-byebug'
+
 # Display
 module Display
   # Unicode Box Drawing
@@ -60,43 +62,65 @@ module CodeMaker
       puts 'Please put a valid combination of four numbers from 1 to 6'
       @secret_code = gets.chomp
     end
-    @secret_code = @secret_code.split('').map { |num| num.to_i }
   end
 end
 
 # Code Breaker
 module CodeBreaker
-  @counter = 1
-
-  def break_code
-    puts 'Guess the secret code by typing four combination of numbers'
-    puts 'from 1 to 6. e.g. "2243" (🔵, 🔵, 🟢, 🟠)'
-
+  def guess_code
     @guess = gets.chomp
     until @guess.length == 4
       puts 'Please put a valid combination of four numbers from 1 to 6'
       @guess = gets.chomp
     end
 
+    rows[counter][0] = @guess.split('').map { |num| num.to_i}
+    get_hint
     update_display
+    check_code
+  end
 
-    if check_code(@guess)
-      puts "Congratulations! You have breaked the code!! (#{secret_code})"
-    else
-      @counter += 1
-      puts "#{@counter}. The code is wrong, try again."
-      break_code
+  def get_hint
+    @same = 0
+    @same_color = 0
+    @n = 0
+    @splitted_code = @secret_code.split('')
+    @splitted_guess = @guess.split('')
+
+    4.times do
+      @same += 1 if @splitted_code[@n] == @splitted_guess[@n]
+      @n += 1
+    end
+
+    @splitted_code.uniq.each { |n| @same_color += 1 if @splitted_guess.any?(n) }
+
+    @same_color -= @same
+    @same_color = 0 if @same_color.negative?
+
+    rows[counter][1] = Array.new(@same, 2) + Array.new(@same_color, 1)
+    rows[counter][1].shuffle!
+
+    (4 - rows[counter][1].length).times do
+      rows[counter][1].push(0)
     end
   end
 
-  def check_code(guess)
-    @guess == guess
+  def check_code
+    if secret_code == @guess
+      game_win
+    elsif @counter == 10
+      game_lose
+    else
+      @counter += 1
+      puts "#{@counter}. The code is wrong, try again."
+      guess_code
+    end
   end
 end
 
 # Game
 class Game
-  attr_accessor :clues, :rows
+  attr_accessor :clues, :rows, :counter
 
   include Display
   include CodeMaker
@@ -108,7 +132,7 @@ class Game
                 5 => '🟣', 6 => '🟤', 0 => '  ' }.freeze
 
     @clues = { 1 => '○', 2 => '●', 0 => ' ' }
-    @rows = { 1 => [[1, 2, 3, 4], [1, 1, 2, 2]],
+    @rows = { 1 => [[0, 0, 0, 0], [0, 0, 0, 0]],
               2 => [[0, 0, 0, 0], [0, 0, 0, 0]],
               3 => [[0, 0, 0, 0], [0, 0, 0, 0]],
               4 => [[0, 0, 0, 0], [0, 0, 0, 0]],
@@ -118,7 +142,27 @@ class Game
               8 => [[0, 0, 0, 0], [0, 0, 0, 0]],
               9 => [[0, 0, 0, 0], [0, 0, 0, 0]],
               10 => [[0, 0, 0, 0], [0, 0, 0, 0]] }
+
+    @secret_code = ''
+    @input = ''
+    @counter = 1
     introduction
+  end
+
+  def game_win
+    if @input == '2'
+      puts 'Congratulations, you breaked the code!'
+    else
+      puts "Congratulations, you win because the computer can't crack the code!"
+    end
+  end
+
+  def game_lose
+    if @input == '2'
+      puts "Sadly, you've lost the game because you can't crack the code in 10 tries."
+    else
+      puts 'The computer cracked the code, you lost!'
+    end
   end
 
   def introduction
@@ -137,14 +181,26 @@ class Game
     puts ''
     puts 'Type 1 if you want to be the Code Maker'
     puts 'Type 2 if you want to be the Code Breaker'
+
     @input = gets.chomp
     until @input.length == 1 && (@input == '1' || @input == '2')
       puts 'Please type a valid number'
       @input = gets.chomp
     end
+
+    if @input == '1'
+      set_code
+    else
+      puts 'Guess the secret code by typing four combination of numbers'
+      puts 'between 1 and 6. e.g. "2243" (🔵, 🔵, 🟢, 🟠)'
+
+      @secret_code = Array.new(4, 1).map! { |x| x = rand(1..6) }.join
+      guess_code
+    end
+
+    update_display
   end
 end
 
 # Demo
-
 Game.new
