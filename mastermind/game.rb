@@ -33,16 +33,9 @@ module Display
 
   def update_display
     top_row
-    mid_row(rows[1][0], rows[1][1])
-    mid_row(rows[2][0], rows[2][1])
-    mid_row(rows[3][0], rows[3][1])
-    mid_row(rows[4][0], rows[4][1])
-    mid_row(rows[5][0], rows[5][1])
-    mid_row(rows[6][0], rows[6][1])
-    mid_row(rows[7][0], rows[7][1])
-    mid_row(rows[8][0], rows[8][1])
-    mid_row(rows[9][0], rows[9][1])
-    mid_row(rows[10][0], rows[10][1])
+    (1..10).each do |i|
+      mid_row(rows[i][0], rows[i][1])
+    end
     bot_row
   end
 end
@@ -152,17 +145,10 @@ class Game
                 5 => '🟣', 6 => '🟤', 0 => '  ' }.freeze
 
     @clues = { 1 => '○', 2 => '●', 0 => ' ' }
-    @rows = { 1 => [[0, 0, 0, 0], [0, 0, 0, 0]],
-              2 => [[0, 0, 0, 0], [0, 0, 0, 0]],
-              3 => [[0, 0, 0, 0], [0, 0, 0, 0]],
-              4 => [[0, 0, 0, 0], [0, 0, 0, 0]],
-              5 => [[0, 0, 0, 0], [0, 0, 0, 0]],
-              6 => [[0, 0, 0, 0], [0, 0, 0, 0]],
-              7 => [[0, 0, 0, 0], [0, 0, 0, 0]],
-              8 => [[0, 0, 0, 0], [0, 0, 0, 0]],
-              9 => [[0, 0, 0, 0], [0, 0, 0, 0]],
-              10 => [[0, 0, 0, 0], [0, 0, 0, 0]] }
-
+    @rows = {}
+    (1..10).each do |i|
+      @rows[i] = [[0, 0, 0, 0], [0, 0, 0, 0]]
+    end
     @secret_code = ''
     @input = ''
     @counter = 1
