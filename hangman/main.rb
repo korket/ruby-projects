@@ -34,12 +34,29 @@ class Game
     guess_check(word_array, guess)
   end
 
+  def game_check
+    if chances.zero? || @word == @hint_array.join('')
+      if chances.zero?
+        puts 'You lost the game.'
+        puts "The secret word is '#{@word}'"
+      else
+        puts 'You win!'
+      end
+      puts 'Play again?'
+      puts "Type 'y' to play again or 'n' to end the game."
+      game_end = gets.chomp
+      game_end == 'y' ? Game.new('google-10000-english-no-swears.txt') : exit
+    else
+      new_game
+    end
+  end
+
   def guess_check(word_array, guess)
     if word_array.any?(guess)
       update_hint(guess)
     else
       @chances -= 1
-      new_game
+      game_check
     end
   end
 
@@ -48,6 +65,7 @@ class Game
       hint_array[idx] = guess if char == guess
     end
     @hint = hint_array.join(' ')
+    game_check
     new_game
   end
 
