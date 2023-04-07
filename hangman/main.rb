@@ -2,7 +2,7 @@
 
 # Game
 class Game
-  attr_accessor :word, :word_array, :hint, :hint_array, :chances
+  attr_accessor :word, :word_array, :hint, :hint_array, :chances, :wrong_characters
 
   def initialize(dictionary)
     @word = get_word(dictionary)
@@ -10,6 +10,7 @@ class Game
     @hint_array = (String.new('_') * word.length).split('')
     @hint = hint_array.join(' ')
     @chances = 7
+    @wrong_characters = []
     introduction
   end
 
@@ -30,6 +31,7 @@ class Game
     puts ''
     puts hint
     puts ''
+    puts "Wrong characters: #{wrong_characters}"
     guess = gets.chomp
     guess_check(word_array, guess)
   end
@@ -43,8 +45,11 @@ class Game
         puts 'You win!'
       end
       puts 'Play again?'
-      puts "Type 'y' to play again or 'n' to end the game."
-      game_end = gets.chomp
+      game_end = ''
+      until game_end == 'y' || game_end == 'n'
+        puts "Type 'y' to play again or 'n' to end the game."
+        game_end = gets.chomp
+      end
       game_end == 'y' ? Game.new('google-10000-english-no-swears.txt') : exit
     else
       new_game
@@ -56,6 +61,7 @@ class Game
       update_hint(guess)
     else
       @chances -= 1
+      wrong_characters.push(guess)
       game_check
     end
   end
