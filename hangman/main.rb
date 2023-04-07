@@ -26,13 +26,19 @@ class Game
   end
 
   def new_game
-    puts "You have #{chances} chances remaining."
-    puts 'Guess the word!'
-    puts ''
-    puts hint
-    puts ''
-    puts "Wrong characters: #{wrong_characters}"
-    guess = gets.chomp
+    guess = ''
+    until guess.length == 1 && guess =~ /[a-z]/
+      puts `clear`
+      puts "You have #{chances} chances remaining."
+      puts 'Guess the secret word!'
+      puts ''
+      puts hint
+      puts ''
+      puts "Wrong characters: #{wrong_characters}"
+      puts 'Type any letter from a to z to guess.'
+      guess = gets.chomp
+      guess.downcase!
+    end
     guess_check(word_array, guess)
   end
 
@@ -42,6 +48,9 @@ class Game
         puts 'You lost the game.'
         puts "The secret word is '#{@word}'"
       else
+        puts ''
+        puts hint
+        puts ''
         puts 'You win!'
       end
       puts 'Play again?'
@@ -59,6 +68,8 @@ class Game
   def guess_check(word_array, guess)
     if word_array.any?(guess)
       update_hint(guess)
+    elsif wrong_characters.any?(guess)
+      game_check
     else
       @chances -= 1
       wrong_characters.push(guess)
@@ -76,11 +87,11 @@ class Game
   end
 
   def introduction
+    puts `clear`
     puts 'Welcome to Hangman.'
     puts 'In this game, you have to guess the secret word by'
     puts 'guessing each letter that are in the secret word.'
-    puts "You have seven chances to guess. If you don't get it right,"
-    puts 'the man will be hanged. :('
+    puts 'You have seven chances to guess.'
     puts ''
     select_game
   end
