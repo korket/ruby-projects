@@ -26,25 +26,23 @@ class Game
   end
 
   def new_game
-    guess = ''
-    until guess.length == 1 && guess =~ /[a-z]/
-      puts `clear`
-      puts "You have #{chances} chances remaining."
-      puts 'Guess the secret word!'
-      puts ''
-      puts hint
-      puts ''
-      puts "Wrong characters: #{wrong_characters}"
-      puts 'Type any letter from a to z to guess.'
-      guess = gets.chomp
-      guess.downcase!
-    end
+    puts `clear`
+    puts "You have #{chances} chances remaining."
+    puts 'Guess the secret word!'
+    puts ''
+    puts hint
+    puts ''
+    puts "Wrong characters: #{wrong_characters}"
+    puts 'Type any letter from a to z to guess.'
+    guess = gets.chomp
+    guess.downcase!
     guess_check(word_array, guess)
   end
 
   def game_check
     if chances.zero? || @word == @hint_array.join('')
       if chances.zero?
+        puts ''
         puts 'You lost the game.'
         puts "The secret word is '#{@word}'"
       else
@@ -53,6 +51,7 @@ class Game
         puts ''
         puts 'You win!'
       end
+      puts ''
       puts 'Play again?'
       game_end = ''
       until game_end == 'y' || game_end == 'n'
@@ -66,6 +65,8 @@ class Game
   end
 
   def guess_check(word_array, guess)
+    new_game until guess.length == 1 && guess =~ /[a-z]/
+
     if word_array.any?(guess)
       update_hint(guess)
     elsif wrong_characters.any?(guess)
@@ -81,8 +82,11 @@ class Game
     word_array.each_with_index do |char, idx|
       hint_array[idx] = guess if char == guess
     end
+
     @hint = hint_array.join(' ')
+
     game_check
+
     new_game
   end
 
@@ -93,13 +97,16 @@ class Game
     puts 'guessing each letter that are in the secret word.'
     puts 'You have seven chances to guess.'
     puts ''
+
     select_game
   end
 
   def select_game
     puts "Type '1' to start a new game, or"
     puts "Type '2' to load a saved game."
+
     selection = gets.chomp
+
     until selection == '1' || selection == '2'
       puts 'Please type a valid selection.'
       selection = gets.chomp
